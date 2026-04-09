@@ -7,38 +7,28 @@ import java.util.List;
  * ============================================================================
  * Use Case 1: Initialize Train and Display Consist Summary
  * * Description:
- * This class represents the entry point for managing a train's composition.
- * At this stage, we initialize a basic list of coaches and display them.
- * * Key Concepts:
- * - List (ArrayList): Used to maintain the ordered sequence of coaches.
- * - String Literals: Representing different coach types.
- * * @author Developer
- * @version 1.0
+ * This class serves as the entry point for the Train Consist Management App.
+ * It initializes an empty ArrayList to hold bogies and displays the startup state.
+ * * @version 1.0
  */
 public class TrainConsistManagementApp {
 
     public static void main(String[] args) {
+        // Printing the welcome message as per requirements
         System.out.println("=======================================");
-        System.out.println("   Train Consist Management System v1.0");
+        System.out.println("   === Train Consist Management App ===");
         System.out.println("=======================================\n");
 
-        // UC1: Initializing the train consist using a dynamic list
-        List<String> trainConsist = new ArrayList<>();
+        // Key Concept: Initializing a dynamic collection using the List interface
+        // This will later hold our various bogie types (Passenger, Goods, etc.)
+        List<String> trainBogies = new ArrayList<>();
 
-        // Adding basic engine and initial coaches
-        trainConsist.add("Engine (WAP-7)");
-        trainConsist.add("Power Car");
-        trainConsist.add("General Coach (G1)");
-        trainConsist.add("Sleeper Coach (S1)");
-        trainConsist.add("AC 3-Tier (B1)");
-        trainConsist.add("Power Car");
+        // Displaying initial state
+        System.out.println("Initializing train consist...");
 
-        System.out.println("--- Current Train Composition ---");
-        for (int i = 0; i < trainConsist.size(); i++) {
-            System.out.println("Position " + (i + 1) + ": " + trainConsist.get(i));
-        }
+        // Key Concept: Using .size() to track the collection count
+        System.out.println("Initial Bogie Count: " + trainBogies.size());
 
-        System.out.println("\nTotal Coaches (including Engine): " + trainConsist.size());
-        System.out.println("System initialized successfully.");
+        System.out.println("\nStatus: System is ready for bogie attachment.");
     }
 }
