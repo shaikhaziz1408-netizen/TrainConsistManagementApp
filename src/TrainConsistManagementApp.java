@@ -1,15 +1,14 @@
-import java.util.Arrays;
+import java.util.Scanner;
 
 /**
  * ============================================================================
  * MAIN CLASS - TrainConsistManagementApp
  * ============================================================================
- * Use Case 17: Sort Bogie Names Using Arrays.sort()
+ * Use Case 18: Linear Search for Bogie ID (Array-Based Searching)
  * * Description:
- * This use case demonstrates the use of Java's optimized built-in sorting.
- * We sort bogie type names alphabetically using Arrays.sort(), which is
- * more efficient than manual algorithms for production environments.
- * * @version 17.0
+ * This use case demonstrates the Linear Search algorithm. We traverse an
+ * unsorted array of bogie IDs sequentially to find a specific target ID.
+ * * @version 18.0
  */
 public class TrainConsistManagementApp {
 
@@ -18,22 +17,34 @@ public class TrainConsistManagementApp {
         System.out.println("   === Train Consist Management App ===");
         System.out.println("=======================================\n");
 
-        // 1. Initialize an array of unsorted bogie type names
-        String[] bogieNames = {"Sleeper", "AC Chair", "First Class", "General", "Luxury"};
+        // 1. Initialize an unsorted array of bogie IDs
+        String[] bogieIds = {"BG101", "BG205", "BG309", "BG412", "BG550"};
 
-        System.out.println("Original Bogie Names: " + Arrays.toString(bogieNames));
+        // 2. Define the search key (the ID we want to find)
+        String searchKey = "BG309";
+        boolean isFound = false;
 
-        // 2. Key Concept: Using the optimized built-in Arrays.sort()
-        // This method uses a Dual-Pivot Quicksort for primitives and
-        // TimSort for objects (Strings), providing O(n log n) performance.
-        System.out.println("\nSorting bogie names alphabetically...");
-        Arrays.sort(bogieNames);
+        System.out.println("Initiating Linear Search for: " + searchKey);
 
-        // 3. Display the sorted result using Arrays.toString()
-        System.out.println("--- Sorted Bogie Names (Natural Order) ---");
-        System.out.println(Arrays.toString(bogieNames));
+        // 3. Key Concept: Sequential Traversal
+        // We visit each index from 0 to n-1
+        for (int i = 0; i < bogieIds.length; i++) {
+            System.out.println("Checking Position " + (i + 1) + ": " + bogieIds[i]);
 
-        // 4. Verify alphabetical order
-        System.out.println("\nStatus: Production-level sorting implemented. Output is alphabetical.");
+            // 4. Key Concept: Equality Comparison using equals()
+            if (bogieIds[i].equals(searchKey)) {
+                isFound = true;
+                // 5. Key Concept: Early Termination (Stop searching once found)
+                System.out.println("\n✔ MATCH FOUND: Bogie " + searchKey + " located at position " + (i + 1));
+                break;
+            }
+        }
+
+        // 6. Final Result
+        if (!isFound) {
+            System.out.println("\n❌ SEARCH COMPLETED: Bogie " + searchKey + " not found in the consist.");
+        }
+
+        System.out.println("\nStatus: Linear search traversal finished.");
     }
 }
