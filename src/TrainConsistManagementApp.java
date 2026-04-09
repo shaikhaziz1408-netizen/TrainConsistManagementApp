@@ -1,39 +1,16 @@
-import java.util.ArrayList;
-import java.util.List;
-
-/**
- * ============================================================================
- * DOMAIN MODEL - Bogie
- * ============================================================================
- */
-class Bogie {
-    private String name;
-    private int capacity;
-
-    public Bogie(String name, int capacity) {
-        this.name = name;
-        this.capacity = capacity;
-    }
-
-    public String getName() { return name; }
-    public int getCapacity() { return capacity; }
-
-    @Override
-    public String toString() {
-        return String.format("[%s: %d Seats]", name, capacity);
-    }
-}
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * ============================================================================
  * MAIN CLASS - TrainConsistManagementApp
  * ============================================================================
- * Use Case 10: Count Total Seats in Train (reduce)
+ * Use Case 11: Validate Train ID & Cargo Codes (Regex)
  * * Description:
- * This use case demonstrates functional aggregation. We use the Stream API
- * to transform Bogie objects into their numeric capacities and then
- * 'reduce' them into a single sum.
- * * @version 10.0
+ * This use case enforces data integrity using Regular Expressions.
+ * We validate that Train IDs follow the 'TRN-dddd' format and
+ * Cargo Codes follow the 'PET-AA' format.
+ * * @version 11.0
  */
 public class TrainConsistManagementApp {
 
@@ -42,30 +19,40 @@ public class TrainConsistManagementApp {
         System.out.println("   === Train Consist Management App ===");
         System.out.println("=======================================\n");
 
-        // 1. Initialize the Train Consist
-        List<Bogie> trainConsist = new ArrayList<>();
-        trainConsist.add(new Bogie("Sleeper", 72));
-        trainConsist.add(new Bogie("Sleeper", 72));
-        trainConsist.add(new Bogie("AC Chair Car", 56));
-        trainConsist.add(new Bogie("First Class", 24));
-        trainConsist.add(new Bogie("General Coach", 90));
+        // 1. Key Concept: Defining Regex Patterns
+        // TRN-\\d{4} : Starts with 'TRN-', followed by exactly 4 digits
+        // PET-[A-Z]{2} : Starts with 'PET-', followed by exactly 2 uppercase letters
+        String trainIdRegex = "TRN-\\d{4}";
+        String cargoCodeRegex = "PET-[A-Z]{2}";
 
-        System.out.println("Calculating total capacity for the following consist:");
-        trainConsist.forEach(b -> System.out.println(" + " + b));
+        // 2. Compiling Patterns for efficiency
+        Pattern trainIdPattern = Pattern.compile(trainIdRegex);
+        Pattern cargoCodePattern = Pattern.compile(cargoCodeRegex);
 
-        // 2. Key Concept: Map and Reduce
-        // map: Extracts the capacity (Integer) from each Bogie object
-        // reduce: Sums all extracted capacities starting from 0 (identity)
-        int totalSeatingCapacity = trainConsist.stream()
-                .map(Bogie::getCapacity)
-                .reduce(0, Integer::sum);
+        // 3. Testing Inputs
+        String[] testTrainIds = {"TRN-1234", "TRAIN12", "TRN-123", "TRN-12345"};
+        String[] testCargoCodes = {"PET-AB", "PET-ab", "PET123", "AB-PET"};
 
-        // 3. Display the numeric analytics
-        System.out.println("\n--- Operational Analytics ---");
-        System.out.println("Total Passenger Bogies: " + trainConsist.size());
-        System.out.println("Total Seating Capacity : " + totalSeatingCapacity + " Seats");
+        System.out.println("--- Validating Train IDs ---");
+        for (String id : testTrainIds) {
+            Matcher matcher = trainIdPattern.matcher(id);
+            if (matcher.matches()) {
+                System.out.println("✔ [" + id + "] : VALID FORMAT");
+            } else {
+                System.out.println("❌ [" + id + "] : INVALID (Expected TRN-XXXX)");
+            }
+        }
 
-        // 4. Verify Integrity
-        System.out.println("\nStatus: Aggregation successful. Total capacity is finalized for dispatch.");
+        System.out.println("\n--- Validating Cargo Codes ---");
+        for (String code : testCargoCodes) {
+            Matcher matcher = cargoCodePattern.matcher(code);
+            if (matcher.matches()) {
+                System.out.println("✔ [" + code + "] : VALID FORMAT");
+            } else {
+                System.out.println("❌ [" + code + "] : INVALID (Expected PET-AA)");
+            }
+        }
+
+        System.out.println("\nStatus: Validation engine operational. System protected from malformed data.");
     }
 }
