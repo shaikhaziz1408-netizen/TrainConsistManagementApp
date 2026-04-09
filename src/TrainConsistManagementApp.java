@@ -1,42 +1,46 @@
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * ============================================================================
- * CUSTOM EXCEPTION - InvalidCapacityException
+ * CUSTOM RUNTIME EXCEPTION - CargoSafetyException
  * ============================================================================
- * A domain-specific exception to handle railway business rule violations.
  */
-class InvalidCapacityException extends Exception {
-    public InvalidCapacityException(String message) {
+class CargoSafetyException extends RuntimeException {
+    public CargoSafetyException(String message) {
         super(message);
     }
 }
 
 /**
  * ============================================================================
- * DOMAIN MODEL - Bogie
+ * DOMAIN MODEL - GoodsBogie
  * ============================================================================
  */
-class Bogie {
-    private String name;
-    private int capacity;
+class GoodsBogie {
+    private String shape;
+    private String currentCargo = "Empty";
+
+    public GoodsBogie(String shape) {
+        this.shape = shape;
+    }
 
     /**
-     * Constructor with Fail-Fast Validation
-     * @throws InvalidCapacityException if capacity is 0 or negative
+     * Attempts to assign cargo with safety checks.
+     * Demonstrates the use of custom runtime exceptions.
      */
-    public Bogie(String name, int capacity) throws InvalidCapacityException {
-        if (capacity <= 0) {
-            throw new InvalidCapacityException("Capacity Error: [" + name + "] must have a capacity greater than zero.");
+    public void assignCargo(String cargo) {
+        System.out.println(">>> Attempting to load " + cargo + " into " + shape + " bogie...");
+
+        // Safety Rule: Petroleum MUST NOT be in a Rectangular bogie
+        if (shape.equalsIgnoreCase("Rectangular") && cargo.equalsIgnoreCase("Petroleum")) {
+            throw new CargoSafetyException("CRITICAL SAFETY VIOLATION: Petroleum requires Cylindrical bogies!");
         }
-        this.name = name;
-        this.capacity = capacity;
+
+        this.currentCargo = cargo;
+        System.out.println("✔ SUCCESS: Cargo assigned successfully.");
     }
 
     @Override
     public String toString() {
-        return "Bogie: " + name + " (Capacity: " + capacity + ")";
+        return "GoodsBogie [" + shape + " | Cargo: " + currentCargo + "]";
     }
 }
 
@@ -44,11 +48,11 @@ class Bogie {
  * ============================================================================
  * MAIN CLASS - TrainConsistManagementApp
  * ============================================================================
- * Use Case 14: Handle Invalid Bogie Capacity (Custom Exception)
+ * Use Case 15: Safe Cargo Assignment Using try-catch-finally
  * * Description:
- * This use case ensures system integrity by preventing the creation of
- * invalid bogies. We use a try-catch block to handle the custom exception.
- * * @version 14.0
+ * This use case demonstrates structured exception handling. It ensures the
+ * app stays stable even during high-risk operational errors.
+ * * @version 15.0
  */
 public class TrainConsistManagementApp {
 
@@ -57,43 +61,30 @@ public class TrainConsistManagementApp {
         System.out.println("   === Train Consist Management App ===");
         System.out.println("=======================================\n");
 
-        List<Bogie> trainConsist = new ArrayList<>();
+        GoodsBogie rectangularBogie = new GoodsBogie("Rectangular");
+        GoodsBogie cylindricalBogie = new GoodsBogie("Cylindrical");
 
-        // 1. Attempting to create bogies
-        System.out.println("--- Starting Bogie Allocation ---");
+        // Process Assignment 1: Safe
+        processAssignment(cylindricalBogie, "Petroleum");
 
-        // Scenario A: Valid Bogie
+        // Process Assignment 2: Unsafe
+        processAssignment(rectangularBogie, "Petroleum");
+
+        System.out.println("\nFinal System Audit: All operations processed.");
+    }
+
+    /**
+     * Demonstrates the try-catch-finally block structure.
+     */
+    private static void processAssignment(GoodsBogie bogie, String cargo) {
         try {
-            Bogie b1 = new Bogie("Sleeper", 72);
-            trainConsist.add(b1);
-            System.out.println("✔ SUCCESS: " + b1 + " added to consist.");
-        } catch (InvalidCapacityException e) {
-            System.out.println("❌ ERROR: " + e.getMessage());
+            bogie.assignCargo(cargo);
+        } catch (CargoSafetyException e) {
+            System.out.println("❌ CAUGHT ERROR: " + e.getMessage());
+            System.out.println("ACTION: Assignment blocked for safety.");
+        } finally {
+            // This block ALWAYS runs, ensuring a log is created
+            System.out.println("[AUDIT LOG]: Safety check completed for assignment attempt.");
         }
-
-        // Scenario B: Invalid Capacity (Zero)
-        try {
-            System.out.println("\nAttempting to add a zero-capacity bogie...");
-            Bogie b2 = new Bogie("General", 0);
-            trainConsist.add(b2);
-        } catch (InvalidCapacityException e) {
-            System.out.println("❌ CAUGHT EXCEPTION: " + e.getMessage());
-        }
-
-        // Scenario C: Invalid Capacity (Negative)
-        try {
-            System.out.println("\nAttempting to add a negative-capacity bogie...");
-            Bogie b3 = new Bogie("AC Tier", -10);
-            trainConsist.add(b3);
-        } catch (InvalidCapacityException e) {
-            System.out.println("❌ CAUGHT EXCEPTION: " + e.getMessage());
-        }
-
-        // 2. Final Summary
-        System.out.println("\n--- Final Valid Consist ---");
-        System.out.println("Total Valid Bogies: " + trainConsist.size());
-        trainConsist.forEach(System.out::println);
-
-        System.out.println("\nStatus: Defensive validation active. Data integrity maintained.");
     }
 }
