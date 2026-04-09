@@ -4,12 +4,12 @@ import java.util.Arrays;
  * ============================================================================
  * MAIN CLASS - TrainConsistManagementApp
  * ============================================================================
- * Use Case 19: Binary Search for Bogie ID (Optimized Searching)
+ * Use Case 20: Exception Handling During Search Operations
  * * Description:
- * This use case implements the Binary Search algorithm. It requires sorted
- * data to function and uses a divide-and-conquer strategy to find target
- * IDs in logarithmic time.
- * * @version 19.0
+ * This use case implements defensive programming. Before performing a
+ * search, the system validates the state of the collection. If the train
+ * is empty, it throws an IllegalStateException to prevent invalid logic.
+ * * @version 20.0
  */
 public class TrainConsistManagementApp {
 
@@ -18,51 +18,62 @@ public class TrainConsistManagementApp {
         System.out.println("   === Train Consist Management App ===");
         System.out.println("=======================================\n");
 
-        // 1. Unsorted input (Precondition for Binary Search is sorted data)
-        String[] bogieIds = {"BG309", "BG101", "BG550", "BG205", "BG412"};
+        // Scenario 1: Empty Consist
+        String[] emptyConsist = {};
+        System.out.println("--- Scenario 1: Searching an Empty Consist ---");
+        try {
+            performSearch(emptyConsist, "BG101");
+        } catch (IllegalStateException e) {
+            System.out.println("❌ STATE ERROR: " + e.getMessage());
+        }
 
-        // 2. Ensuring data is sorted before searching
-        System.out.println("Sorting bogie IDs to satisfy Binary Search requirements...");
+        // Scenario 2: Valid Consist
+        String[] validConsist = {"BG309", "BG101", "BG550"};
+        System.out.println("\n--- Scenario 2: Searching a Valid Consist ---");
+        try {
+            performSearch(validConsist, "BG101");
+        } catch (IllegalStateException e) {
+            System.out.println("❌ STATE ERROR: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Performs an optimized Binary Search with State Validation.
+     * @param bogieIds Array of IDs to search
+     * @param key ID to find
+     * @throws IllegalStateException if the array is null or empty
+     */
+    public static void performSearch(String[] bogieIds, String key) {
+        // 1. Key Concept: State Validation (Defensive Programming)
+        if (bogieIds == null || bogieIds.length == 0) {
+            // 2. Key Concept: Throwing IllegalStateException
+            throw new IllegalStateException("Search Failed: The train consist is empty. Please add bogies before searching.");
+        }
+
+        // Precondition: Binary Search requires sorted data
         Arrays.sort(bogieIds);
-        System.out.println("Sorted Consist: " + Arrays.toString(bogieIds));
 
-        // 3. Search parameters
-        String searchKey = "BG412";
-        System.out.println("\nInitiating Binary Search for: " + searchKey);
-
-        // 4. Binary Search Logic
         int low = 0;
         int high = bogieIds.length - 1;
-        boolean isFound = false;
+        boolean found = false;
 
         while (low <= high) {
-            // Compute middle index
             int mid = low + (high - low) / 2;
+            int comparison = key.compareTo(bogieIds[mid]);
 
-            // Compare searchKey with mid element using compareTo()
-            int res = searchKey.compareTo(bogieIds[mid]);
-
-            System.out.println("Checking Mid-Point (Index " + mid + "): " + bogieIds[mid]);
-
-            if (res == 0) {
-                System.out.println("\n✔ MATCH FOUND: Bogie " + searchKey + " located at sorted index " + mid);
-                isFound = true;
+            if (comparison == 0) {
+                System.out.println("✔ Result: Bogie " + key + " found at sorted position " + (mid + 1));
+                found = true;
                 break;
-            }
-
-            if (res > 0) {
-                // Key is in the right half
+            } else if (comparison > 0) {
                 low = mid + 1;
             } else {
-                // Key is in the left half
                 high = mid - 1;
             }
         }
 
-        if (!isFound) {
-            System.out.println("\n❌ SEARCH COMPLETED: Bogie " + searchKey + " not found in the registry.");
+        if (!found) {
+            System.out.println("ℹ Result: Bogie " + key + " is not in the current consist.");
         }
-
-        System.out.println("\nStatus: Binary search optimization completed.");
     }
 }
