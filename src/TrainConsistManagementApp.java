@@ -1,15 +1,16 @@
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * ============================================================================
  * MAIN CLASS - TrainConsistManagementApp
  * ============================================================================
- * Use Case 2: Add Passenger Bogies to Train (ArrayList Operations)
+ * Use Case 3: Track Unique Bogie IDs (Set – HashSet)
  * * Description:
- * This use case demonstrates dynamic list management. We simulate attaching
- * passenger bogies, removing a specific coach, and checking for existence.
- * * @version 2.0
+ * This use case introduces the concept of uniqueness. We use a HashSet to
+ * store bogie IDs, ensuring that no two bogies share the same identification.
+ * Unlike a List, a Set will automatically reject duplicate entries.
+ * * @version 3.0
  */
 public class TrainConsistManagementApp {
 
@@ -18,34 +19,28 @@ public class TrainConsistManagementApp {
         System.out.println("   === Train Consist Management App ===");
         System.out.println("=======================================\n");
 
-        // Key Concept: ArrayList for resizable collection
-        List<String> passengerBogies = new ArrayList<>();
+        // Key Concept: HashSet for uniqueness and fast lookup
+        Set<String> bogieIds = new HashSet<>();
 
-        // 1. ADD: Attaching passenger bogies
-        passengerBogies.add("Sleeper");
-        passengerBogies.add("AC Chair");
-        passengerBogies.add("First Class");
+        System.out.println("Registering bogie IDs...");
 
-        System.out.println("Bogies added: Sleeper, AC Chair, First Class.");
-        System.out.println("Current Consist: " + passengerBogies);
+        // 1. Adding unique bogie IDs
+        bogieIds.add("BG101");
+        bogieIds.add("BG102");
+        bogieIds.add("BG103");
 
-        // 2. REMOVE: Detaching a specific bogie
-        String bogieToRemove = "AC Chair";
-        passengerBogies.remove(bogieToRemove);
-        System.out.println("\nDetaching: " + bogieToRemove);
-        System.out.println("Updated Consist: " + passengerBogies);
+        // 2. Intentionally adding duplicate IDs to test deduplication
+        System.out.println("Attempting to add duplicate IDs: BG101, BG102...");
+        bogieIds.add("BG101");
+        bogieIds.add("BG102");
 
-        // 3. CONTAINS: Checking for existence
-        String searchBogie = "Sleeper";
-        System.out.println("\nChecking for: " + searchBogie);
-        if (passengerBogies.contains(searchBogie)) {
-            System.out.println("Result: " + searchBogie + " is attached to the train.");
-        } else {
-            System.out.println("Result: " + searchBogie + " is not in the consist.");
-        }
+        // 3. Display the final set
+        System.out.println("\n--- Unique Bogie ID Registry ---");
+        System.out.println("Current IDs: " + bogieIds);
 
-        // Final State
-        System.out.println("\nFinal Bogie Count: " + passengerBogies.size());
-        System.out.println("Consist Summary: " + passengerBogies);
+        // Key Concept: Automatic Deduplication
+        System.out.println("Total Unique Bogies: " + bogieIds.size());
+
+        System.out.println("\nStatus: Uniqueness enforced. No duplicate IDs allowed.");
     }
 }
