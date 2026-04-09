@@ -1,16 +1,39 @@
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
+/**
+ * ============================================================================
+ * DOMAIN MODEL - Bogie
+ * ============================================================================
+ */
+class Bogie {
+    private String name;
+    private int capacity;
+
+    public Bogie(String name, int capacity) {
+        this.name = name;
+        this.capacity = capacity;
+    }
+
+    public String getName() { return name; }
+    public int getCapacity() { return capacity; }
+
+    @Override
+    public String toString() {
+        return String.format("Bogie: %-15s | Capacity: %d Seats", name, capacity);
+    }
+}
 
 /**
  * ============================================================================
  * MAIN CLASS - TrainConsistManagementApp
  * ============================================================================
- * Use Case 6: Map Bogie to Capacity (HashMap)
+ * Use Case 8: Filter Passenger Bogies Using Streams
  * * Description:
- * This use case introduces Key-Value pairs. We use a HashMap to link bogie
- * names to their specific capacities (seats or load). This allows the
- * system to perform calculations and lookups efficiently.
- * * @version 6.0
+ * This use case demonstrates the Stream API. We filter a master list to find
+ * only high-capacity bogies (Capacity > 60) using a declarative pipeline.
+ * * @version 8.0
  */
 public class TrainConsistManagementApp {
 
@@ -19,30 +42,34 @@ public class TrainConsistManagementApp {
         System.out.println("   === Train Consist Management App ===");
         System.out.println("=======================================\n");
 
-        // Key Concept: HashMap - Key (String: Bogie Name) -> Value (Integer: Capacity)
-        Map<String, Integer> bogieCapacities = new HashMap<>();
+        // 1. Initialize the Master List
+        List<Bogie> masterBogieList = new ArrayList<>();
+        masterBogieList.add(new Bogie("Sleeper", 72));
+        masterBogieList.add(new Bogie("AC Chair Car", 56));
+        masterBogieList.add(new Bogie("First Class", 24));
+        masterBogieList.add(new Bogie("General Coach", 90));
 
-        // 1. PUT: Associating data with bogies
-        // Mapping bogie types to their seating/load capacities
-        bogieCapacities.put("Sleeper", 72);
-        bogieCapacities.put("AC Chair Car", 56);
-        bogieCapacities.put("First Class", 24);
-        bogieCapacities.put("General Coach", 90);
+        System.out.println("--- Full Passenger Bogie List ---");
+        masterBogieList.forEach(System.out::println);
 
-        System.out.println("Bogie-Capacity mapping initialized.");
+        // 2. Key Concept: Stream API Pipeline
+        // filter: selects elements matching the condition
+        // collect: converts the stream back into a List
+        int threshold = 60;
+        List<Bogie> highCapacityBogies = masterBogieList.stream()
+                .filter(b -> b.getCapacity() > threshold)
+                .collect(Collectors.toList());
 
-        // 2. ITERATION: Displaying the data using entrySet()
-        // entrySet() allows us to access both the Key and Value in a single loop
-        System.out.println("\n--- Bogie Capacity Summary ---");
-        for (Map.Entry<String, Integer> entry : bogieCapacities.entrySet()) {
-            System.out.println("Bogie Type: " + entry.getKey() + " | Capacity: " + entry.getValue() + " Seats");
+        // 3. Display the results
+        System.out.println("\n--- High Capacity Bogies ( > " + threshold + " Seats ) ---");
+        if (highCapacityBogies.isEmpty()) {
+            System.out.println("No bogies match the criteria.");
+        } else {
+            highCapacityBogies.forEach(System.out::println);
         }
 
-        // 3. FAST LOOKUP: Demonstrate O(1) retrieval
-        String checkBogie = "AC Chair Car";
-        System.out.println("\nFast Lookup Check:");
-        System.out.println("Capacity of " + checkBogie + ": " + bogieCapacities.get(checkBogie) + " Seats");
-
-        System.out.println("\nStatus: Operational attributes successfully mapped.");
+        // 4. Verify Integrity: Original list should be untouched
+        System.out.println("\nTotal Bogies in Master List: " + masterBogieList.size());
+        System.out.println("Status: Stream filtering completed without modifying original data.");
     }
 }
