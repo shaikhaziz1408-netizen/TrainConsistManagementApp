@@ -1,7 +1,5 @@
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * ============================================================================
@@ -22,7 +20,7 @@ class Bogie {
 
     @Override
     public String toString() {
-        return String.format("[%s (Cap: %d)]", name, capacity);
+        return String.format("[%s: %d Seats]", name, capacity);
     }
 }
 
@@ -30,12 +28,12 @@ class Bogie {
  * ============================================================================
  * MAIN CLASS - TrainConsistManagementApp
  * ============================================================================
- * Use Case 9: Group Bogies by Type (Collectors.groupingBy)
+ * Use Case 10: Count Total Seats in Train (reduce)
  * * Description:
- * This use case uses advanced Stream collectors to categorize a flat list
- * into a Map structure. This mimics real-world reporting where bogies
- * are grouped by their class or category.
- * * @version 9.0
+ * This use case demonstrates functional aggregation. We use the Stream API
+ * to transform Bogie objects into their numeric capacities and then
+ * 'reduce' them into a single sum.
+ * * @version 10.0
  */
 public class TrainConsistManagementApp {
 
@@ -44,32 +42,30 @@ public class TrainConsistManagementApp {
         System.out.println("   === Train Consist Management App ===");
         System.out.println("=======================================\n");
 
-        // 1. Initialize the List with multiple bogies of the same type
+        // 1. Initialize the Train Consist
         List<Bogie> trainConsist = new ArrayList<>();
         trainConsist.add(new Bogie("Sleeper", 72));
         trainConsist.add(new Bogie("Sleeper", 72));
         trainConsist.add(new Bogie("AC Chair Car", 56));
         trainConsist.add(new Bogie("First Class", 24));
-        trainConsist.add(new Bogie("AC Chair Car", 56));
         trainConsist.add(new Bogie("General Coach", 90));
 
-        System.out.println("Processing flat consist list for categorization...");
+        System.out.println("Calculating total capacity for the following consist:");
+        trainConsist.forEach(b -> System.out.println(" + " + b));
 
-        // 2. Key Concept: Collectors.groupingBy()
-        // This creates a Map where the Key is the Bogie Name
-        // and the Value is a List of all Bogies with that name.
-        Map<String, List<Bogie>> groupedBogies = trainConsist.stream()
-                .collect(Collectors.groupingBy(Bogie::getName));
+        // 2. Key Concept: Map and Reduce
+        // map: Extracts the capacity (Integer) from each Bogie object
+        // reduce: Sums all extracted capacities starting from 0 (identity)
+        int totalSeatingCapacity = trainConsist.stream()
+                .map(Bogie::getCapacity)
+                .reduce(0, Integer::sum);
 
-        // 3. Display the structured report
-        System.out.println("\n--- Categorized Bogie Report ---");
-        groupedBogies.forEach((type, list) -> {
-            System.out.println("Category: " + type + " (Count: " + list.size() + ")");
-            System.out.println("   Members: " + list);
-        });
+        // 3. Display the numeric analytics
+        System.out.println("\n--- Operational Analytics ---");
+        System.out.println("Total Passenger Bogies: " + trainConsist.size());
+        System.out.println("Total Seating Capacity : " + totalSeatingCapacity + " Seats");
 
-        // 4. Verify original list integrity
-        System.out.println("\nTotal Bogies in System: " + trainConsist.size());
-        System.out.println("Status: Flat data successfully transformed into hierarchical Map.");
+        // 4. Verify Integrity
+        System.out.println("\nStatus: Aggregation successful. Total capacity is finalized for dispatch.");
     }
 }
