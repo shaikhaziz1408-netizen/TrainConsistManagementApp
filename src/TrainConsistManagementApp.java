@@ -1,14 +1,15 @@
-import java.util.Scanner;
+import java.util.Arrays;
 
 /**
  * ============================================================================
  * MAIN CLASS - TrainConsistManagementApp
  * ============================================================================
- * Use Case 18: Linear Search for Bogie ID (Array-Based Searching)
+ * Use Case 19: Binary Search for Bogie ID (Optimized Searching)
  * * Description:
- * This use case demonstrates the Linear Search algorithm. We traverse an
- * unsorted array of bogie IDs sequentially to find a specific target ID.
- * * @version 18.0
+ * This use case implements the Binary Search algorithm. It requires sorted
+ * data to function and uses a divide-and-conquer strategy to find target
+ * IDs in logarithmic time.
+ * * @version 19.0
  */
 public class TrainConsistManagementApp {
 
@@ -17,34 +18,51 @@ public class TrainConsistManagementApp {
         System.out.println("   === Train Consist Management App ===");
         System.out.println("=======================================\n");
 
-        // 1. Initialize an unsorted array of bogie IDs
-        String[] bogieIds = {"BG101", "BG205", "BG309", "BG412", "BG550"};
+        // 1. Unsorted input (Precondition for Binary Search is sorted data)
+        String[] bogieIds = {"BG309", "BG101", "BG550", "BG205", "BG412"};
 
-        // 2. Define the search key (the ID we want to find)
-        String searchKey = "BG309";
+        // 2. Ensuring data is sorted before searching
+        System.out.println("Sorting bogie IDs to satisfy Binary Search requirements...");
+        Arrays.sort(bogieIds);
+        System.out.println("Sorted Consist: " + Arrays.toString(bogieIds));
+
+        // 3. Search parameters
+        String searchKey = "BG412";
+        System.out.println("\nInitiating Binary Search for: " + searchKey);
+
+        // 4. Binary Search Logic
+        int low = 0;
+        int high = bogieIds.length - 1;
         boolean isFound = false;
 
-        System.out.println("Initiating Linear Search for: " + searchKey);
+        while (low <= high) {
+            // Compute middle index
+            int mid = low + (high - low) / 2;
 
-        // 3. Key Concept: Sequential Traversal
-        // We visit each index from 0 to n-1
-        for (int i = 0; i < bogieIds.length; i++) {
-            System.out.println("Checking Position " + (i + 1) + ": " + bogieIds[i]);
+            // Compare searchKey with mid element using compareTo()
+            int res = searchKey.compareTo(bogieIds[mid]);
 
-            // 4. Key Concept: Equality Comparison using equals()
-            if (bogieIds[i].equals(searchKey)) {
+            System.out.println("Checking Mid-Point (Index " + mid + "): " + bogieIds[mid]);
+
+            if (res == 0) {
+                System.out.println("\n✔ MATCH FOUND: Bogie " + searchKey + " located at sorted index " + mid);
                 isFound = true;
-                // 5. Key Concept: Early Termination (Stop searching once found)
-                System.out.println("\n✔ MATCH FOUND: Bogie " + searchKey + " located at position " + (i + 1));
                 break;
+            }
+
+            if (res > 0) {
+                // Key is in the right half
+                low = mid + 1;
+            } else {
+                // Key is in the left half
+                high = mid - 1;
             }
         }
 
-        // 6. Final Result
         if (!isFound) {
-            System.out.println("\n❌ SEARCH COMPLETED: Bogie " + searchKey + " not found in the consist.");
+            System.out.println("\n❌ SEARCH COMPLETED: Bogie " + searchKey + " not found in the registry.");
         }
 
-        System.out.println("\nStatus: Linear search traversal finished.");
+        System.out.println("\nStatus: Binary search optimization completed.");
     }
 }
